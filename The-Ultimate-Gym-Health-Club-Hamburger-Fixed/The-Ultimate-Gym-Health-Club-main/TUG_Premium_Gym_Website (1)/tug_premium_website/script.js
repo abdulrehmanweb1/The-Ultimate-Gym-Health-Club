@@ -1,0 +1,13 @@
+const menuToggle=document.querySelector('.menu-toggle');
+const nav=document.querySelector('.nav');
+const header=document.querySelector('.header');
+function closeMenu(){if(!menuToggle||!nav)return;menuToggle.setAttribute('aria-expanded','false');menuToggle.setAttribute('aria-label','Open navigation');nav.classList.remove('open');document.body.classList.remove('menu-open')}
+function positionMenu(){if(header&&nav&&menuToggle&&menuToggle.getAttribute('aria-expanded')==='true'){nav.style.top=`${header.getBoundingClientRect().bottom}px`}}
+if(menuToggle&&nav){menuToggle.addEventListener('click',()=>{const open=menuToggle.getAttribute('aria-expanded')==='true';menuToggle.setAttribute('aria-expanded',String(!open));menuToggle.setAttribute('aria-label',open?'Open navigation':'Close navigation');nav.classList.toggle('open',!open);document.body.classList.toggle('menu-open',!open);if(!open)positionMenu()});nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});window.addEventListener('resize',()=>{if(window.innerWidth>680)closeMenu();else positionMenu()});window.addEventListener('scroll',positionMenu,{passive:true})}
+function updateHeader(){if(header)header.classList.toggle('scrolled',window.scrollY>20)}window.addEventListener('scroll',updateHeader,{passive:true});updateHeader();
+const year=document.getElementById('year');if(year)year.textContent=new Date().getFullYear();
+const reveals=document.querySelectorAll('.reveal');const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if('IntersectionObserver'in window&&!reduce){const observer=new IntersectionObserver((entries,obs)=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');obs.unobserve(entry.target)}}),{threshold:.12,rootMargin:'0px 0px -35px 0px'});reveals.forEach(el=>observer.observe(el))}else reveals.forEach(el=>el.classList.add('is-visible'));
+const lightbox=document.querySelector('.lightbox');const lightboxImage=lightbox?.querySelector('img');const close=document.querySelector('.lightbox-close');
+document.querySelectorAll('[data-lightbox]').forEach(item=>item.addEventListener('click',()=>{if(!lightbox||!lightboxImage)return;lightboxImage.src=item.dataset.lightbox;lightboxImage.alt=item.querySelector('img')?.alt||'Gym concept image';if(typeof lightbox.showModal==='function')lightbox.showModal();else window.open(item.dataset.lightbox,'_blank','noopener')}));
+function closeLightbox(){if(lightbox?.open)lightbox.close()}close?.addEventListener('click',closeLightbox);lightbox?.addEventListener('click',e=>{if(e.target===lightbox)closeLightbox()});lightbox?.addEventListener('close',()=>{if(lightboxImage)lightboxImage.src=''});
